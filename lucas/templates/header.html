@@ -11,9 +11,10 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto py-0">
                 <a href="{% url 'index' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}">Home</a>
-                <a href="{% url 'about' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">데이터 관리</a>
-                <a href="{% url 'service' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'service' %}active{% endif %}">AI 학습</a>
-                <a href="{% url 'contact' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">진단예측</a>
+                <a href="{% url 'viewData:dataView' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'dataView' %}active{% endif %}">데이터 관리</a>
+                <a href="{% url 'studyData:train' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'train' %}active{% endif %}">AI 학습</a>
+                <a href="{% url 'predictData:predict' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'predict' %}active{% endif %}">진단예측</a>
+                <a href="{% url 'lungapp:test' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'test' %}active{% endif %}">모델연결</a>
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">분석 리포트</a>
                     <div class="dropdown-menu m-0">

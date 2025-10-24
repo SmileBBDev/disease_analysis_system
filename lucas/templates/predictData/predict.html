@@ -5,12 +5,74 @@
 
             <div class="container-xxl bg-primary page-header">
                 <div class="container text-center">
-                    <h1 class="text-white animated zoomIn mb-3">AI 학습</h1>
+                    <h1 class="text-white animated zoomIn mb-3">진단예측</h1>
                 </div>
             </div>
         </div>
         <!-- Navbar & Hero End -->
 
+        <!-- 추론 -->
+        <div class="card mt-4">
+            <div class="card-header fw-bold">입력값으로 예측</div>
+            <div class="card-body">
+            <form method="post" class="row gy-2 gx-3 align-items-end">
+                {% csrf_token %}        
+                <input type="hidden" name="action" value="predict">
+
+                <!-- 1) 기본: Django Form 렌더링 -->
+                {% if form and form.fields %}
+                {% for field in form %}
+                    <div class="col-sm-3">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger small">{{ field.errors }}</div>
+                    {% endif %}
+                    </div>
+                {% endfor %}
+
+                <!-- 2) 폼이 비면: 수동 메타로 강제 렌더링 (항상 보이게) -->
+                {% elif manual_fields %}
+                {% for f in manual_fields %}
+                    <div class="col-sm-3">
+                    <label class="form-label">{{ f.label }}</label>
+                    {% if f.type == "select" %}
+                        <select name="{{ f.name }}" class="form-select">
+                        {% for opt in f.choices %}
+                            <option value="{{ opt }}">{{ opt }}</option>
+                        {% endfor %}
+                        </select>
+                    {% elif f.type == "number" %}
+                        <input type="number" step="any" class="form-control"
+                            name="{{ f.name }}"
+                            {% if f.min is not None %} min="{{ f.min }}"{% endif %}
+                            {% if f.max is not None %} max="{{ f.max }}"{% endif %} />
+                    {% else %}
+                        <input type="text" class="form-control" name="{{ f.name }}" />
+                    {% endif %}
+                    </div>
+                {% endfor %}
+
+                {% else %}
+                <div class="text-muted">입력 폼 생성 실패: form/수동필드 모두 비어 있습니다.</div>
+                {% endif %}
+
+                <div class="col-12">
+                <button class="btn btn-success mt-2">추론</button>
+                </div>
+            </form>
+
+            {% if pred_label %}
+                <hr/>
+                <h5 class="mb-2">예측 결과: <span class="badge bg-primary">{{ pred_label }}</span></h5>
+                <div>
+                {% for name, p in pred_table %}
+                    <span class="badge text-bg-light prob-badge me-1">{{ name }}: {{ p }}</span>
+                {% endfor %}
+                </div>
+            {% endif %}
+            </div>
+        </div>
 
         <!-- Service Start -->
         <div class="container-xxl py-6">

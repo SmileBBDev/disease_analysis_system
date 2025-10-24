@@ -1,0 +1,92 @@
+{
+  "target_col": "lung_cancer",
+  "feature_cols": [
+    "age",
+    "gender",
+    "pack_years",
+    "radon_exposure",
+    "asbestos_exposure",
+    "secondhand_smoke_exposure",
+    "copd_diagnosis",
+    "alcohol_consumption",
+    "family_history"
+  ],
+  "class_names": [
+    "No",
+    "Yes"
+  ],
+  "used_classes": [
+    "Yes",
+    "No"
+  ],
+  "n_per_class": 1000,
+  "total_samples_used": 1000,
+  "num_cols": [
+    "age",
+    "pack_years"
+  ],
+  "cat_cols": [
+    "gender",
+    "radon_exposure",
+    "asbestos_exposure",
+    "secondhand_smoke_exposure",
+    "copd_diagnosis",
+    "alcohol_consumption",
+    "family_history"
+  ],
+  "cat_choices": {
+    "gender": [
+      "Female",
+      "Male"
+    ],
+    "radon_exposure": [
+      "High",
+      "Low",
+      "Medium"
+    ],
+    "asbestos_exposure": [
+      "No",
+      "Yes"
+    ],
+    "secondhand_smoke_exposure": [
+      "No",
+      "Yes"
+    ],
+    "copd_diagnosis": [
+      "No",
+      "Yes"
+    ],
+    "alcohol_consumption": [
+      "Heavy",
+      "Moderate"
+    ],
+    "family_history": [
+      "No",
+      "Yes"
+    ]
+  },
+  "num_stats": {
+    "age": {
+      "min": 18.0,
+      "max": 100.0
+    },
+    "pack_years": {
+      "min": 0.1546773952023628,
+      "max": 99.97522309574155
+    }
+  },
+  "excluded_features": [
+    "ID",
+    "class",
+    "created_at",
+    "diagnosis",
+    "id",
+    "label",
+    "lung_cancer",
+    "outcome",
+    "patient_id",
+    "pation_id",
+    "target",
+    "y"
+  ]
+}

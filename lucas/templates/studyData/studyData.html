@@ -4,11 +4,53 @@
 {% block content %}
             <div class="container-xxl bg-primary page-header">
                 <div class="container text-center">
-                    <h1 class="text-white animated zoomIn mb-3">진단예측</h1>
+                    <h1 class="text-white animated zoomIn mb-3">AI 학습</h1>
                 </div>
             </div>
         </div>
         <!-- Navbar & Hero End -->
+
+        <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="train">
+        <button type="submit" class="btn btn-primary">AI 학습 시작</button>
+        </form>
+
+        <!-- 데이터 테이블 -->
+        {% if data_html %}
+        <div class="card mb-3">
+        <div class="card-header fw-bold">데이터 미리보기</div>
+        <div class="card-body data-table">
+            {{ data_html|safe }}
+            {% if data_note %}
+            <div class="text-muted small mt-2">{{ data_note }}</div>
+            {% endif %}
+        </div>
+        </div>
+        {% endif %}
+        <!-- 성능표 + ROC -->
+        <div class="row g-3 align-items-start">
+            <div class="col-md-5">
+            <div class="card metrics">
+                <div class="card-header fw-bold">성능 지표 (Hold-out)</div>
+                <div class="card-body">
+                {{ metrics_html|safe }}
+                </div>
+            </div>
+            </div>
+            <div class="col-md-7">
+            <div class="card">
+                <div class="card-header fw-bold">ROC 곡선</div>
+                <div class="card-body">
+                {% if roc_url %}
+                    <img src="{{ roc_url }}" class="img-fluid" alt="ROC">
+                {% else %}
+                    <div class="text-muted">ROC 이미지가 없습니다.</div>
+                {% endif %}
+                </div>
+            </div>
+            </div>
+        </div>
 
 
         <!-- Contact Start -->

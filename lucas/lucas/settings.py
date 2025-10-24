@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'lungapp',
+    'predictData',
+    'studyData',
+    'viewData',
 ]
 
 MIDDLEWARE = [
@@ -73,10 +77,26 @@ WSGI_APPLICATION = "lucas.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
+# MySQL 데이터베이스 설정
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "lungcancer", # 사용자 요청 DB명
+        "USER": "acorn",
+        "PASSWORD": "acorn1234",
+        "HOST": "34.61.113.204",
+        "PORT": "3306",
+        "OPTIONS": {
+            "charset": "utf8mb4",
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
@@ -122,9 +142,63 @@ STATICFILES_DIRS = [
 
 # media 폴더 목록에 생성해주기
 MEDIA_URL = "media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# 데이터 경로
+DATA_DIR = BASE_DIR / 'data'
+LUNG_CANCER_CSV = DATA_DIR / 'lung_cancer_dataset.csv'
+
+# 전역변수
+LUNG_TARGET_NAME = 'LUNG_CANCER'   # 실제 타깃 컬럼명으로 교체
+LUNG_EXCLUDE_FEATURES = ["patient_id", "lung_cancer"]
+LUNG_CANCER_CSV = str(BASE_DIR / "data" / "lung_cancer_dataset.csv")
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# === Logging (Timeline & SQL) ===
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+
+    "formatters": {
+        "timeline": {
+            "format": "[{asctime}] {levelname:<7} {name} :: {message}",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+            "style": "{",
+        },
+    },
+
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "timeline",
+        },
+    },
+
+    "loggers": {
+        # 요청/오류 기본 로그 (원하면 유지)
+        "django.request": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": True,
+        },
+
+        # 여러분 앱 흐름용 로거 (views.py에서 log = logging.getLogger("app.flow") 사용 가능)
+        "app.flow": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+
+        # ORM SQL 로그 (많으면 INFO로 낮추거나 제거)
+        "django.db.backends": {
+            "handlers": ["console"],
+            "level": "DEBUG",   # DEBUG: 전체 SQL, INFO: 더 적게
+            "propagate": False,
+        },
+    },
+}

@@ -26,3 +26,6 @@ def team(request):
 
 def nopage(request):
     return render(request, 'lucas/404.html')
+
+def model(request):
+    return render(request, 'lucas/model.html')

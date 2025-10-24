@@ -16,18 +16,28 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from lucas import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.intro, name = 'intro'), # 기본 루트로 첫 인트로 페이지
     path("home/", views.index, name = 'index'), # /home으로 메인페이지로 이동
-    path('about/', views.about, name='about'),    # 데이터 관리
-    path('service/', views.service, name='service'),  # AI 학습
-    path('contact/', views.contact, name='contact'),  # 진단 예측
+    # path('about/', views.about, name='about'),    
+    # path('service/', views.service, name='service'),  
+    path('contact/', views.contact, name='contact'),  
     path('feature/', views.feature, name='feature'),  # 과거 예측 기록 관리
     path('quote/', views.quote, name='quote'),        # 리포트 다운로드
     path('team', views.team, name="team"),
     path('nopage', views.nopage, name='404'),
+    path("lungapp/", include('lungapp.urls')),
+    path("predictData/", include('predictData.urls')), # AI 학습
+    path("studyData/", include('studyData.urls')), # 진단 예측
+    path("viewData/", include('viewData.urls')), # 데이터 관리
+    
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

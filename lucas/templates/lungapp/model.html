@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+        <div class="container-xxl bg-primary page-header">
+                <div class="container text-center">
+                    <h1 class="text-white animated zoomIn mb-3">모델 연결</h1>
+                </div>
+            </div>
+        </div>
+        <!-- Navbar & Hero End -->
+<div class="container">
+  <h2 class="mb-3">Lung Cancer — SVM 웹서비스</h2>
+
+  {% if messages %}
+    {% for m in messages %}
+      <div class="alert alert-{{ m.tags }} py-2">{{ m }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- 동작 버튼 -->
+  <div class="d-flex gap-2 mb-3">
+    <form method="post" class="d-inline">{% csrf_token %}
+      <input type="hidden" name="action" value="load_data">
+      <button class="btn btn-outline-primary">데이터 로드</button>
+    </form>
+    <form method="post" class="d-inline">{% csrf_token %}
+      <input type="hidden" name="action" value="train">
+      <button class="btn btn-primary">학습 (SVM)</button>
+    </form>
+  </div>
+
+  <!-- 데이터 테이블 -->
+  {% if data_html %}
+  <div class="card mb-3">
+    <div class="card-header fw-bold">데이터 미리보기</div>
+    <div class="card-body data-table">
+      {{ data_html|safe }}
+      {% if data_note %}
+        <div class="text-muted small mt-2">{{ data_note }}</div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- 성능표 + ROC -->
+  {% if metrics_html %}
+  <div class="row g-3 align-items-start">
+    <div class="col-md-5">
+      <div class="card metrics">
+        <div class="card-header fw-bold">성능 지표 (Hold-out)</div>
+        <div class="card-body">
+          {{ metrics_html|safe }}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div class="card">
+        <div class="card-header fw-bold">ROC 곡선</div>
+        <div class="card-body">
+          {% if roc_url %}
+            <img src="{{ roc_url }}" class="img-fluid" alt="ROC">
+          {% else %}
+            <div class="text-muted">ROC 이미지가 없습니다.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- 추론 -->
+  <div class="card mt-4">
+    <div class="card-header fw-bold">입력값으로 예측</div>
+    <div class="card-body">
+      <form method="post" class="row gy-2 gx-3 align-items-end">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="predict">
+
+        <!-- 1) 기본: Django Form 렌더링 -->
+        {% if form and form.fields %}
+          {% for field in form %}
+            <div class="col-sm-3">
+              <label class="form-label">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}
+                <div class="text-danger small">{{ field.errors }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+
+        <!-- 2) 폼이 비면: 수동 메타로 강제 렌더링 (항상 보이게) -->
+        {% elif manual_fields %}
+          {% for f in manual_fields %}
+            <div class="col-sm-3">
+              <label class="form-label">{{ f.label }}</label>
+              {% if f.type == "select" %}
+                <select name="{{ f.name }}" class="form-select">
+                  {% for opt in f.choices %}
+                    <option value="{{ opt }}">{{ opt }}</option>
+                  {% endfor %}
+                </select>
+              {% elif f.type == "number" %}
+                <input type="number" step="any" class="form-control"
+                       name="{{ f.name }}"
+                       {% if f.min is not None %} min="{{ f.min }}"{% endif %}
+                       {% if f.max is not None %} max="{{ f.max }}"{% endif %} />
+              {% else %}
+                <input type="text" class="form-control" name="{{ f.name }}" />
+              {% endif %}
+            </div>
+          {% endfor %}
+
+        {% else %}
+          <div class="text-muted">입력 폼 생성 실패: form/수동필드 모두 비어 있습니다.</div>
+        {% endif %}
+
+        <div class="col-12">
+          <button class="btn btn-success mt-2">추론</button>
+        </div>
+      </form>
+
+      {% if pred_label %}
+        <hr/>
+        <h5 class="mb-2">예측 결과: <span class="badge bg-primary">{{ pred_label }}</span></h5>
+        <div>
+          {% for name, p in pred_table %}
+            <span class="badge text-bg-light prob-badge me-1">{{ name }}: {{ p }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <footer class="text-muted mt-4">
+    Preprocess: Num(median→scale), Cat(mode→OneHot) → SVC(RBF, probability=True).<br/>
+    데이터: <code>/data/lung_cancer_dataset.csv</code> · 모델: <code>/media/lung_svm_model.joblib</code>
+  </footer>
+</div>
+{% endblock %}
