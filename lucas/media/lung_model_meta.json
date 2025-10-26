@@ -20,7 +20,7 @@
     "No"
   ],
   "n_per_class": 1000,
-  "total_samples_used": 1000,
+  "total_samples_used": 1002,
   "num_cols": [
     "age",
     "pack_years"
@@ -42,7 +42,8 @@
     "radon_exposure": [
       "High",
       "Low",
-      "Medium"
+      "Medium",
+      "Yes"
     ],
     "asbestos_exposure": [
       "No",
@@ -58,7 +59,9 @@
     ],
     "alcohol_consumption": [
       "Heavy",
-      "Moderate"
+      "Moderate",
+      "No",
+      "Yes"
     ],
     "family_history": [
       "No",

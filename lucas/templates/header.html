@@ -14,19 +14,18 @@
                 <a href="{% url 'viewData:dataView' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'dataView' %}active{% endif %}">데이터 관리</a>
                 <a href="{% url 'studyData:train' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'train' %}active{% endif %}">AI 학습</a>
                 <a href="{% url 'predictData:predict' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'predict' %}active{% endif %}">진단예측</a>
-                <a href="{% url 'lungapp:test' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'test' %}active{% endif %}">모델연결</a>
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">분석 리포트</a>
                     <div class="dropdown-menu m-0">
-                        <a href="{% url 'feature' %}" class="dropdown-item">과거 예측 기록 관리</a>
-                        <a href="{% url 'quote' %}" class="dropdown-item">리포트 다운로드</a>
-                        <a href="{% url 'team' %}" class="dropdown-item">Our Team</a>
+                        <a href="{% url '404' %}" class="dropdown-item">과거 예측 기록 관리</a>
+                        <a href="{% url '404' %}" class="dropdown-item">리포트 다운로드</a>
+                        <!--<a href="{% url 'team' %}" class="dropdown-item">Our Team</a>
                         <a href="{% url 'feature' %}" class="dropdown-item">Testimonial</a>
-                        <a href="{% url '404' %}" class="dropdown-item">404 Page</a>
+                        <a href="{% url '404' %}" class="dropdown-item">404 Page</a>-->
                     </div>
                 </div>
             </div>
-            <a href="" class="btn btn-light rounded-pill text-primary py-2 px-4 ms-lg-5">로그아웃--</a>
+            <a href="" class="btn btn-light rounded-pill text-primary py-2 px-4 ms-lg-5">로그아웃</a>
         </div>
     </nav>
 </div>

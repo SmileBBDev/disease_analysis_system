@@ -3,78 +3,132 @@
 
 {% block content %}
 
-            <div class="container-xxl bg-primary page-header">
-                <div class="container text-center">
-                    <h1 class="text-white animated zoomIn mb-3">진단예측</h1>
-                </div>
-            </div>
+    <div class="container-xxl bg-primary page-header">
+        <div class="container text-center">
+            <h1 class="text-white animated zoomIn mb-3">진단예측</h1>
         </div>
-        <!-- Navbar & Hero End -->
+    </div>
+</div>
+<!-- Navbar & Hero End -->
 
-        <!-- 추론 -->
-        <div class="card mt-4">
-            <div class="card-header fw-bold">입력값으로 예측</div>
-            <div class="card-body">
-            <form method="post" class="row gy-2 gx-3 align-items-end">
-                {% csrf_token %}        
-                <input type="hidden" name="action" value="predict">
+<!-- 추론 -->
+<div class="container-xxl">
+  <div class="container">
+    <div class="mx-auto text-center wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+      <h2 class="mb-5">폐암 진단 예측</h2>
+    </div>
 
-                <!-- 1) 기본: Django Form 렌더링 -->
-                {% if form and form.fields %}
-                {% for field in form %}
-                    <div class="col-sm-3">
-                    <label class="form-label">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.errors %}
-                        <div class="text-danger small">{{ field.errors }}</div>
-                    {% endif %}
-                    </div>
-                {% endfor %}
+    <div class="row justify-content-center">
+      <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.3s">
+        <p class="text-center mb-4">
+          사용자님의 정보를 입력하여 폐암 진단 유/무를 확인하세요.
+        </p>
 
-                <!-- 2) 폼이 비면: 수동 메타로 강제 렌더링 (항상 보이게) -->
-                {% elif manual_fields %}
-                {% for f in manual_fields %}
-                    <div class="col-sm-3">
-                    <label class="form-label">{{ f.label }}</label>
-                    {% if f.type == "select" %}
-                        <select name="{{ f.name }}" class="form-select">
-                        {% for opt in f.choices %}
-                            <option value="{{ opt }}">{{ opt }}</option>
-                        {% endfor %}
-                        </select>
-                    {% elif f.type == "number" %}
-                        <input type="number" step="any" class="form-control"
-                            name="{{ f.name }}"
-                            {% if f.min is not None %} min="{{ f.min }}"{% endif %}
-                            {% if f.max is not None %} max="{{ f.max }}"{% endif %} />
-                    {% else %}
-                        <input type="text" class="form-control" name="{{ f.name }}" />
-                    {% endif %}
-                    </div>
-                {% endfor %}
+        <!-- 예측 입력 폼 -->
+        <form method="post" class="row g-3">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="predict">
 
-                {% else %}
-                <div class="text-muted">입력 폼 생성 실패: form/수동필드 모두 비어 있습니다.</div>
+          <!-- 1) Django 폼 렌더링 -->
+          {% if form and form.fields %}
+            {% for field in form %}
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {{ field }}
+                  <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                </div>
+                {% if field.errors %}
+                  <div class="text-danger small mt-1">{{ field.errors }}</div>
                 {% endif %}
+              </div>
+            {% endfor %}
 
-                <div class="col-12">
-                <button class="btn btn-success mt-2">추론</button>
+          <!-- 2) 수동 필드 -->
+          {% elif manual_fields %}
+            {% for f in manual_fields %}
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {% if f.type == "select" %}
+                    <select name="{{ f.name }}" id="{{ f.name }}" class="form-select">
+                      {% for opt in f.choices %}
+                        <option value="{{ opt }}">{{ opt }}</option>
+                      {% endfor %}
+                    </select>
+                  {% elif f.type == "number" %}
+                    <input type="number" step="any" class="form-control"
+                      name="{{ f.name }}" id="{{ f.name }}"
+                      {% if f.min is not None %} min="{{ f.min }}"{% endif %}
+                      {% if f.max is not None %} max="{{ f.max }}"{% endif %} />
+                  {% else %}
+                    <input type="text" class="form-control" name="{{ f.name }}" id="{{ f.name }}" />
+                  {% endif %}
+                  <label for="{{ f.name }}">{{ f.label }}</label>
                 </div>
-            </form>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="text-muted text-center">입력 폼 생성 실패: form/수동필드 모두 비어 있습니다.</div>
+          {% endif %}
 
-            {% if pred_label %}
-                <hr/>
-                <h5 class="mb-2">예측 결과: <span class="badge bg-primary">{{ pred_label }}</span></h5>
-                <div>
+          <div class="col-12">
+            <button class="btn btn-primary w-100 py-3" type="submit">진단 예측하기</button>
+          </div>
+        </form>
+
+
+
+        <!-- 예측 결과 카드 -->
+        {% if pred_label %}
+        <div class="card bg-light shadow-sm mt-5 border-0">
+            <div class="card-body py-4">
+            <h5 class="text-center mb-4 fw-bold text-success">
+                예측 결과: <span class="badge bg-success fs-6 px-3 py-2">{{ pred_label }}</span>
+            </h5>
+
+            <!-- 확률 요약 -->
+            <div class="d-flex justify-content-center mb-4 flex-wrap gap-2">
                 {% for name, p in pred_table %}
-                    <span class="badge text-bg-light prob-badge me-1">{{ name }}: {{ p }}</span>
+                <span class="badge bg-white border text-dark px-3 py-2 fs-6 shadow-sm">
+                    {{ name }}: {{ p }}
+                </span>
                 {% endfor %}
+            </div>
+
+            <!-- 확률 시각화 -->
+            {% for name, p in pred_table %}
+                <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-semibold fs-6">{{ name }}</span>
+                    <span class="fw-bold text-secondary">{{ p }}%</span>
                 </div>
-            {% endif %}
+                <div class="progress" style="height: 28px; background-color: #e9ecef; border-radius: 8px; overflow: hidden;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated
+                    {% if name == pred_label %}
+                        bg-success
+                    {% else %}
+                        bg-secondary
+                    {% endif %}"
+                    role="progressbar"
+                    style="width: {{ p }}%; transition: width 1.5s ease-in-out;">
+                    </div>
+                </div>
+                </div>
+            {% endfor %}
             </div>
         </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+      <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
 
-        <!-- Service Start -->
+{% endblock %}
+
+
+        {% comment %} <!-- Service Start -->
         <div class="container-xxl py-6">
             <div class="container">
                 <div class="mx-auto text-center wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
@@ -239,10 +293,6 @@
                 </div>
             </div>
         </div>
-        <!-- Testimonial End -->
+        <!-- Testimonial End --> {% endcomment %}
 
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
-    </div>
-
-{% endblock %}
+  

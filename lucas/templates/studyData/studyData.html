@@ -10,95 +10,67 @@
         </div>
         <!-- Navbar & Hero End -->
 
-        <form method="post">
+<div class="container-xxl">
+  <div class="container">
+    <div class="text-center mb-4">
+      <h2 class="fw-bold mb-3">데이터 학습</h2>
+      <p class="text-muted">폐암 데이터를 기반으로 학습데이터 성능을 확인하세요.</p>
+    </div>
+
+    <!-- 학습 버튼 -->
+    <div class="text-center mb-5">
+      <form method="post">
         {% csrf_token %}
         <input type="hidden" name="action" value="train">
-        <button type="submit" class="btn btn-primary">AI 학습 시작</button>
-        </form>
+        <button type="submit" class="btn btn-success px-4 py-2 shadow-sm" style="font-size: 1.1rem;">
+          <i class="bi bi-cpu me-2"></i>AI 학습 시작
+        </button>
+      </form>
+    </div>
 
-        <!-- 데이터 테이블 -->
-        {% if data_html %}
-        <div class="card mb-3">
-        <div class="card-header fw-bold">데이터 미리보기</div>
-        <div class="card-body data-table">
-            {{ data_html|safe }}
-            {% if data_note %}
-            <div class="text-muted small mt-2">{{ data_note }}</div>
-            {% endif %}
-        </div>
-        </div>
+    <!-- 데이터 테이블 -->
+    {% if data_html %}
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header fw-bold bg-light">데이터 미리보기</div>
+      <div class="card-body data-table">
+        {{ data_html|safe }}
+        {% if data_note %}
+        <div class="text-muted small mt-2">{{ data_note }}</div>
         {% endif %}
-        <!-- 성능표 + ROC -->
-        <div class="row g-3 align-items-start">
-            <div class="col-md-5">
-            <div class="card metrics">
-                <div class="card-header fw-bold">성능 지표 (Hold-out)</div>
-                <div class="card-body">
-                {{ metrics_html|safe }}
-                </div>
-            </div>
-            </div>
-            <div class="col-md-7">
-            <div class="card">
-                <div class="card-header fw-bold">ROC 곡선</div>
-                <div class="card-body">
-                {% if roc_url %}
-                    <img src="{{ roc_url }}" class="img-fluid" alt="ROC">
-                {% else %}
-                    <div class="text-muted">ROC 이미지가 없습니다.</div>
-                {% endif %}
-                </div>
-            </div>
-            </div>
-        </div>
+      </div>
+    </div>
+    {% endif %}
 
-
-        <!-- Contact Start -->
-        <div class="container-xxl py-6">
-            <div class="container">
-                <div class="mx-auto text-center wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-                    <div class="d-inline-block border rounded-pill text-primary px-4 mb-3">Contact Us</div>
-                    <h2 class="mb-5">If You Have Any Query, Please Feel Free Contact Us</h2>
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-lg-7 wow fadeInUp" data-wow-delay="0.3s">
-                        <p class="text-center mb-4">The contact form is currently inactive. Get a functional and working contact form with Ajax & PHP in a few minutes. Just copy and paste the files, add a little code and you're done. <a href="https://htmlcodex.com/contact-form">Download Now</a>.</p>
-                        <form>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="name" placeholder="Your Name">
-                                        <label for="name">Your Name</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control" id="email" placeholder="Your Email">
-                                        <label for="email">Your Email</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="subject" placeholder="Subject">
-                                        <label for="subject">Subject</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" placeholder="Leave a message here" id="message" style="height: 150px"></textarea>
-                                        <label for="message">Message</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <button class="btn btn-primary w-100 py-3" type="submit">Send Message</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+    <!-- 성능표 + ROC -->
+    <div class="row g-4 align-items-start">
+      <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm h-100">
+          <div class="card-header fw-bold bg-secondary text-white">
+            <i class="bi bi-bar-chart me-1"></i>성능 지표 (Hold-out)
+          </div>
+          <div class="card-body">
+            {{ metrics_html|safe }}
+          </div>
         </div>
-        <!-- Contact End -->
+      </div>
+
+      <div class="col-md-6 col-lg-7">
+        <div class="card shadow-sm h-100">
+          <div class="card-header fw-bold bg-secondary text-white">
+            <i class="bi bi-graph-up me-1"></i>ROC 곡선
+          </div>
+          <div class="card-body text-center">
+            {% if roc_url %}
+            <img src="{{ roc_url }}" class="img-fluid rounded shadow-sm" alt="ROC">
+            {% else %}
+            <div class="text-muted">ROC 이미지가 없습니다.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 
         <!-- Back to Top -->
